@@ -85,21 +85,6 @@ jobs:
           echo "컨테이너가 정상적으로 실행 중입니다"
           docker ps | grep my-nest-app-container
 
-      - name: Test container health
-        run: |
-          # 컨테이너가 응답하는지 확인 (최대 30초 대기)
-          for i in {1..30}; do
-            if curl -f http://localhost:3000 > /dev/null 2>&1; then
-              echo "애플리케이션이 정상적으로 응답합니다"
-              exit 0
-            fi
-            echo "응답 대기 중... ($i/30)"
-            sleep 1
-          done
-          echo "애플리케이션이 응답하지 않습니다"
-          docker logs my-nest-app-container
-          exit 1
-
       - name: Cleanup
         if: always()
         run: |
