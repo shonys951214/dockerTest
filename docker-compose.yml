@@ -14,5 +14,18 @@ services:
     volumes:
       - ./data:/var/lib/mysql
 
+  app:
+    build: .
+    ports:
+      - 3000:3000
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: son
+      DB_PASSWORD: 1234
+      DB_NAME: dockerTest
+    depends_on:
+      - db
+
 volumes:
   db_data:
