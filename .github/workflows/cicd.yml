@@ -61,3 +61,40 @@ jobs:
           fi
           echo "도커 이미지 빌드완료"
           docker images my-nest-app
+
+      - name: Run Docker container
+        run: |
+          docker run -d -p 3000:3000 --name my-nest-app-container my-nest-app
+          sleep 5
+          echo "도커 컨테이너 실행 완료"
+
+      - name: Verify container is running
+        run: |
+          if ! docker ps | grep -q my-nest-app-container; then
+            echo "Container failed to start"
+            docker logs my-nest-app-container
+            exit 1
+          fi
+          echo "컨테이너가 정상적으로 실행 중입니다"
+          docker ps | grep my-nest-app-container
+
+      - name: Test container health
+        run: |
+          # 컨테이너가 응답하는지 확인 (최대 30초 대기)
+          for i in {1..30}; do
+            if curl -f http://localhost:3000 > /dev/null 2>&1; then
+              echo "애플리케이션이 정상적으로 응답합니다"
+              exit 0
+            fi
+            echo "응답 대기 중... ($i/30)"
+            sleep 1
+          done
+          echo "애플리케이션이 응답하지 않습니다"
+          docker logs my-nest-app-container
+          exit 1
+
+      - name: Cleanup
+        if: always()
+        run: |
+          docker stop my-nest-app-container || true
+          docker rm my-nest-app-container || true
