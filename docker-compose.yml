@@ -7,8 +7,8 @@ services:
       - 3307:3306
     environment:
       MYSQL_ROOT_PASSWORD: 1234
-      MYSQL_DATABASE: korea
-      MYSQL_USER: arom
+      MYSQL_DATABASE: dockerTest
+      MYSQL_USER: son
       MYSQL_PASSWORD: 1234
 
     volumes:
